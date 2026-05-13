@@ -1,2 +1,1 @@
-# P200-G103-12
-Joc de Atari, Lab. Multimedia
+Hugo Alguacil i Bernat Rabassa i Cabotí
