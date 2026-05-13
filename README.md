@@ -1,1 +1,1 @@
-Hugo Alguacil i Bernat Rabassa i Cabotí
+Hugo Alguacil i Bernat Rabassa i Cabotí idiota
