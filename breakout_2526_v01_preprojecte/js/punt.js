@@ -1,5 +1,5 @@
 /*
-* CLASSE PUNT
+* CLASSE PUNT.
 */
 
 class Punt {
