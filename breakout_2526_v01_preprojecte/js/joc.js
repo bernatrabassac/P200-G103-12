@@ -52,8 +52,8 @@ class Joc{
     }
 
     update(){
-        this.bola.update(this.amplada, this.alcada);
-        this.pala.update(this.key, this.amplada);
+        this.bola.update(this.amplada, this.alcada, this.pala, this.totxo);
+        this.pala.update(this.key, this.amplada); 
         this.draw();       
 
     }

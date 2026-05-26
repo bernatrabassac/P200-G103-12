@@ -22,8 +22,7 @@ class Bola {
     update(amplada, alcada){
 
         let puntActual = this.posicio;
-        let puntSeguent= new Punt(this.posicio.x + this.vx,
-                            this.posicio.y + this.vy);
+        let puntSeguent= new Punt(this.posicio.x + this.vx, this.posicio.y + this.vy);
         let trajectoria= new Segment(puntActual, puntSeguent);
         let exces;
         let xoc = false;
@@ -63,18 +62,40 @@ class Bola {
             this.vx = -this.vx;
         }
         //Xoc amb la pala
+        let xocPala = this.interseccioSegmentRectangle(trajectoria, pala);
+        if (xocPala) {
+            this.posicio.x = xocPala.pI.x;
+            this.posicio.y = xocPala.pI.y - this.radi; 
+            this.vy = -this.vy; // Invertimos la velocidad vertical
+            xoc = true;
+        }
 
-        //Xoc amb els totxos del mur
-        
-        //Utilitzem el mètode INTERSECCIOSEGMENTRECTANGLE
-        
+        // Xoc amb el totxo (si no ha sido tocado ya)
+        if (!totxo.tocat) {
+            let xocTotxo = this.interseccioSegmentRectangle(trajectoria, totxo);
+            if (xocTotxo) {
+                this.posicio.x = xocTotxo.pI.x;
+                this.posicio.y = xocTotxo.pI.y;
+                
+                // Dependiendo de por dónde golpee, rebota de una forma u otra
+                if (xocTotxo.vora === "superior" || xocTotxo.vora === "inferior") {
+                    this.vy = -this.vy;
+                } else {
+                    this.vx = -this.vx;
+                }
+                
+                totxo.tocat = true; // Desaparece el totxo
+                xoc = true;
+            }
+        }
 
         if (!xoc){
             this.posicio.x = trajectoria.puntB.x;
             this.posicio.y = trajectoria.puntB.y;
         }     
-        
     }
+               
+
 
     interseccioSegmentRectangle(segment, rectangle){
        let puntI;
