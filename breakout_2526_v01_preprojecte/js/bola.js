@@ -70,7 +70,7 @@ class Bola {
             xoc = true;
         }
 
-        // Xoc amb el totxo (si no ha sido tocado ya)
+        // Xoc amb el totxo 
         if (!totxo.tocat) {
             let xocTotxo = this.interseccioSegmentRectangle(trajectoria, totxo);
             if (xocTotxo) {
@@ -84,7 +84,6 @@ class Bola {
                     this.vx = -this.vx;
                 }
                 
-                totxo.tocat = true; // Desaparece el totxo
                 xoc = true;
             }
         }
