@@ -19,7 +19,7 @@ class Bola {
         this.posicio.x += x;
         this.posicio.y += y;
     }
-    update(amplada, alcada){
+    update(amplada, alcada,pala, totxo){
 
         let puntActual = this.posicio;
         let puntSeguent= new Punt(this.posicio.x + this.vx, this.posicio.y + this.vy);
