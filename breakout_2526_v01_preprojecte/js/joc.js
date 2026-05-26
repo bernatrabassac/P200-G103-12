@@ -40,10 +40,12 @@ class Joc{
         this.bola.draw(this.ctx);
         this.totxo.draw(this.ctx);
         $(document).on("keydown",{joc:this}, function(e){
-           //Moviment de la pala
-        });
+            if(e.keyCode === e.data.joc.key.LEFT.code) e.data.joc.key.LEFT.pressed = true;
+            if(e.keyCode === e.data.joc.key.RIGHT.code) e.data.joc.key.RIGHT.pressed = true;        });
         $(document).on("keyup", {joc:this}, function(e){
             //Moviment de la pala
+            if(e.keyCode === e.data.joc.key.LEFT.code) e.data.joc.key.LEFT.pressed = false;
+            if(e.keyCode === e.data.joc.key.RIGHT.code) e.data.joc.key.RIGHT.pressed = false;
         });
 
         

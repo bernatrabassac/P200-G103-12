@@ -12,8 +12,13 @@ class Pala {
         this.color = "#D30"; 
     }
 
-    update(){
-       
+    update(keys, canvasWidth){
+        if(keys.LEFT.pressed && this.posicio.x > 0){
+            this.posicio.x -= this.vx;
+        }
+        if(keys.RIGHT.pressed && this.posicio.x + this.amplada < canvasWidth){
+            this.posicio.x += this.vx;
+        }
     }
    
     draw(ctx) {
