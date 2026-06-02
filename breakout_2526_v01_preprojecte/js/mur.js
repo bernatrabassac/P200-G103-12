@@ -1,20 +1,50 @@
 /*
 * CLASSE MUR
 */
-
 class Mur {
     constructor() {
-        
+        this.defineixNivells(); 
+        this.llistaTotxos = []; 
     }
 
-    generaMur(){
-       
+    generaMur(numNivell, ampladaTotxo, alcadaTotxo, margeSuperior = 40, margeEsquerra = 15) {
+        this.llistaTotxos = []; 
+        
+        let dadesNivell = this.nivells[numNivell]; 
+        let color = dadesNivell.color;
+        let files = dadesNivell.totxos;
+
+        // Recorrem les files (Y)
+        for (let i = 0; i < files.length; i++) {
+            let filaStr = files[i];
+            
+
+            for (let j = 0; j < filaStr.length; j++) {
+                
+
+                if (filaStr[j] === 'a') {
+
+                    let posX = margeEsquerra + (j * ampladaTotxo);
+                    let posY = margeSuperior + (i * alcadaTotxo);
+                    
+
+                    let nouTotxo = new Totxo(new Punt(posX, posY), ampladaTotxo, alcadaTotxo, color);
+                    this.llistaTotxos.push(nouTotxo);
+                }
+            }
+        }
     }
-    draw(ctx){
-       
+
+    draw(ctx) {
+        for (let i = 0; i < this.llistaTotxos.length; i++) {
+            let totxo = this.llistaTotxos[i];
+            if (!totxo.tocat) {
+                totxo.draw(ctx);
+            }
+        }
     }
      
-    defineixNivells(){
+    defineixNivells() {
         this.nivells=[
             {
                 color: "#4CF", // blue cel
@@ -47,5 +77,4 @@ class Mur {
             }
         ];
     }
-
-};
+}

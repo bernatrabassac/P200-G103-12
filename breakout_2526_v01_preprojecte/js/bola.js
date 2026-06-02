@@ -20,7 +20,7 @@ class Bola {
         this.posicio.y += y;
     }
 
-    update(amplada, alcada, pala, totxo) {
+    update(amplada, alcada, pala, mur) {
         let puntActual = this.posicio;
         let puntSeguent = new Punt(this.posicio.x + this.vx, this.posicio.y + this.vy);
         let trajectoria = new Segment(puntActual, puntSeguent);
@@ -65,62 +65,47 @@ class Bola {
 
         // --- Xoc amb la pala ---
         if (this.vy > 0) {
-
-            let palaEngreixada = {
-                posicio: new Punt(pala.posicio.x - this.radi, pala.posicio.y - this.radi),
-                amplada: pala.amplada + (this.radi * 2),
-                alcada: pala.alcada + (this.radi * 2)
-            };
             let xocPala = this.interseccioSegmentRectangle(trajectoria, pala);
             
             if (xocPala) {
-                if (xocPala.vora === "superior") {
-                    this.posicio.x = xocPala.pI.x;
-                    this.posicio.y = xocPala.pI.y - this.radi; 
-                    
-                    // Calculem l'excés i l'apliquem sobre la nova velocitat (evita comportaments estranys)
-                    exces = (trajectoria.puntB.y - (xocPala.pI.y - this.radi)) / this.vy;
-                    this.vy = -this.vy; 
-                    this.posicio.y = this.posicio.y - (exces * this.vy);
-                    
-                } else if (xocPala.vora === "esquerra") {
-                    this.posicio.x = xocPala.pI.x - this.radi;
-                    this.posicio.y = xocPala.pI.y;
-                    this.vx = -this.vx;
-                } else if (xocPala.vora === "dreta") {
-                    this.posicio.x = xocPala.pI.x + this.radi;
-                    this.posicio.y = xocPala.pI.y;
-                    this.vx = -this.vx;
-                }
-                
+                // SOLUCIÓ: Clavem la bola exactament a la part superior de la pala.
+                // Eliminem l'excés matemàtic que empentava la bola cap a dins per error.
+                this.posicio.x = xocPala.pI.x;
+                this.posicio.y = pala.posicio.y - this.radi; 
+                this.vy = -this.vy; 
                 xoc = true;
             }
         }
 
-        // --- Xoc amb el totxo ---
-        if (!totxo.tocat) {
-            let xocTotxo = this.interseccioSegmentRectangle(trajectoria, totxo);
-            if (xocTotxo) {
-                if (xocTotxo.vora === "superior") {
-                    this.posicio.x = xocTotxo.pI.x;
-                    this.posicio.y = xocTotxo.pI.y - this.radi;
-                    this.vy = -this.vy;
-                } else if (xocTotxo.vora === "inferior") {
-                    this.posicio.x = xocTotxo.pI.x;
-                    this.posicio.y = xocTotxo.pI.y + this.radi;
-                    this.vy = -this.vy;
-                } else if (xocTotxo.vora === "esquerra") {
-                    this.posicio.x = xocTotxo.pI.x - this.radi;
-                    this.posicio.y = xocTotxo.pI.y;
-                    this.vx = -this.vx;
-                } else if (xocTotxo.vora === "dreta") {
-                    this.posicio.x = xocTotxo.pI.x + this.radi;
-                    this.posicio.y = xocTotxo.pI.y;
-                    this.vx = -this.vx;
+        // --- Xoc amb el mur de totxos ---
+        for (let i = 0; i < mur.llistaTotxos.length; i++) {
+            let totxoActual = mur.llistaTotxos[i];
+            
+            if (!totxoActual.tocat && !xoc) {
+                let xocTotxo = this.interseccioSegmentRectangle(trajectoria, totxoActual);
+                if (xocTotxo) {
+                    if (xocTotxo.vora === "superior") {
+                        this.posicio.x = xocTotxo.pI.x;
+                        this.posicio.y = xocTotxo.pI.y - this.radi;
+                        this.vy = -this.vy;
+                    } else if (xocTotxo.vora === "inferior") {
+                        this.posicio.x = xocTotxo.pI.x;
+                        this.posicio.y = xocTotxo.pI.y + this.radi;
+                        this.vy = -this.vy;
+                    } else if (xocTotxo.vora === "esquerra") {
+                        this.posicio.x = xocTotxo.pI.x - this.radi;
+                        this.posicio.y = xocTotxo.pI.y;
+                        this.vx = -this.vx;
+                    } else if (xocTotxo.vora === "dreta") {
+                        this.posicio.x = xocTotxo.pI.x + this.radi;
+                        this.posicio.y = xocTotxo.pI.y;
+                        this.vx = -this.vx;
+                    }
+                    
+                    totxoActual.tocat = true; 
+                    xoc = true;
+                    break; 
                 }
-                
-                totxo.tocat = true; // Marquem el totxo com a destruït
-                xoc = true;
             }
         }
 
