@@ -5,8 +5,7 @@ class Bola {
         this.vx = 1;
         this.vy = -1;
         this.color = "#fff";
-      
-    };
+    }
 
     draw(ctx) {
         ctx.beginPath();
@@ -15,72 +14,82 @@ class Bola {
         ctx.fill();
         ctx.closePath();
     }
-    mou(x,y){
+
+    mou(x, y) {
         this.posicio.x += x;
         this.posicio.y += y;
     }
-    update(amplada, alcada,pala, totxo){
 
+    update(amplada, alcada, pala, totxo) {
         let puntActual = this.posicio;
-        let puntSeguent= new Punt(this.posicio.x + this.vx, this.posicio.y + this.vy);
-        let trajectoria= new Segment(puntActual, puntSeguent);
+        let puntSeguent = new Punt(this.posicio.x + this.vx, this.posicio.y + this.vy);
+        let trajectoria = new Segment(puntActual, puntSeguent);
         let exces;
         let xoc = false;
         
-
-        //Xoc amb els laterals del canvas
-        //Xoc lateral superior
-        if(trajectoria.puntB.y - this.radi < 0){
-            exces= (trajectoria.puntB.y - this.radi)/this.vy;
-            this.posicio.x = trajectoria.puntB.x - exces*this.vx;
+        // --- Xoc amb els laterals del canvas ---
+        
+        // Xoc lateral superior
+        if (trajectoria.puntB.y - this.radi < 0) {
+            exces = (trajectoria.puntB.y - this.radi) / this.vy;
+            this.posicio.x = trajectoria.puntB.x - exces * this.vx;
             this.posicio.y = this.radi;
             xoc = true;
             this.vy = -this.vy;
         }
-        //Xoc lateral dret
-        else if(trajectoria.puntB.y + this.radi > alcada) {
+        // Xoc lateral inferior
+        else if (trajectoria.puntB.y + this.radi > alcada) {
             exces = (trajectoria.puntB.y + this.radi - alcada) / this.vy;
             this.posicio.x = trajectoria.puntB.x - exces * this.vx;
             this.posicio.y = alcada - this.radi;
             xoc = true;
             this.vy = -this.vy;
         }
-        //Xoc lateral esquerra
-        if(trajectoria.puntB.x - this.radi < 0){
+        
+        // Xoc lateral esquerra
+        if (trajectoria.puntB.x - this.radi < 0) {
             exces = (trajectoria.puntB.x - this.radi) / this.vx;
             this.posicio.x = this.radi;
-            this.posicio.y = trajectoria.puntB.y - exces * this.vy; // aqui la Y es mou amb exces
+            this.posicio.y = trajectoria.puntB.y - exces * this.vy; 
             xoc = true;
             this.vx = -this.vx;
         }
-        //Xoc lateral inferior
-        else if(trajectoria.puntB.x + this.radi > amplada) {
+        // Xoc lateral dret
+        else if (trajectoria.puntB.x + this.radi > amplada) {
             exces = (trajectoria.puntB.x + this.radi - amplada) / this.vx;
             this.posicio.x = amplada - this.radi;
             this.posicio.y = trajectoria.puntB.y - exces * this.vy;
             xoc = true;
             this.vx = -this.vx;
         }
-        //Xoc amb la pala
-        let xocPala = this.interseccioSegmentRectangle(trajectoria, pala);
-        if (xocPala) {
-            this.posicio.x = xocPala.pI.x;
-            this.posicio.y = xocPala.pI.y - this.radi; 
-            this.vy = -this.vy; // Invertimos la velocidad vertical
-            xoc = true;
-        }
 
-        // Xoc amb el totxo 
-        if (!totxo.tocat) {
-            let xocTotxo = this.interseccioSegmentRectangle(trajectoria, totxo);
-            if (xocTotxo) {
-                this.posicio.x = xocTotxo.pI.x;
-                this.posicio.y = xocTotxo.pI.y;
-                
-                // Dependiendo de por dónde golpee, rebota de una forma u otra
-                if (xocTotxo.vora === "superior" || xocTotxo.vora === "inferior") {
-                    this.vy = -this.vy;
-                } else {
+        // --- Xoc amb la pala ---
+        if (this.vy > 0) {
+
+            let palaEngreixada = {
+                posicio: new Punt(pala.posicio.x - this.radi, pala.posicio.y - this.radi),
+                amplada: pala.amplada + (this.radi * 2),
+                alcada: pala.alcada + (this.radi * 2)
+            };
+            let xocPala = this.interseccioSegmentRectangle(trajectoria, pala);
+            
+            if (xocPala) {
+                if (xocPala.vora === "superior") {
+                    this.posicio.x = xocPala.pI.x;
+                    this.posicio.y = xocPala.pI.y - this.radi; 
+                    
+                    // Calculem l'excés i l'apliquem sobre la nova velocitat (evita comportaments estranys)
+                    exces = (trajectoria.puntB.y - (xocPala.pI.y - this.radi)) / this.vy;
+                    this.vy = -this.vy; 
+                    this.posicio.y = this.posicio.y - (exces * this.vy);
+                    
+                } else if (xocPala.vora === "esquerra") {
+                    this.posicio.x = xocPala.pI.x - this.radi;
+                    this.posicio.y = xocPala.pI.y;
+                    this.vx = -this.vx;
+                } else if (xocPala.vora === "dreta") {
+                    this.posicio.x = xocPala.pI.x + this.radi;
+                    this.posicio.y = xocPala.pI.y;
                     this.vx = -this.vx;
                 }
                 
@@ -88,15 +97,41 @@ class Bola {
             }
         }
 
-        if (!xoc){
+        // --- Xoc amb el totxo ---
+        if (!totxo.tocat) {
+            let xocTotxo = this.interseccioSegmentRectangle(trajectoria, totxo);
+            if (xocTotxo) {
+                if (xocTotxo.vora === "superior") {
+                    this.posicio.x = xocTotxo.pI.x;
+                    this.posicio.y = xocTotxo.pI.y - this.radi;
+                    this.vy = -this.vy;
+                } else if (xocTotxo.vora === "inferior") {
+                    this.posicio.x = xocTotxo.pI.x;
+                    this.posicio.y = xocTotxo.pI.y + this.radi;
+                    this.vy = -this.vy;
+                } else if (xocTotxo.vora === "esquerra") {
+                    this.posicio.x = xocTotxo.pI.x - this.radi;
+                    this.posicio.y = xocTotxo.pI.y;
+                    this.vx = -this.vx;
+                } else if (xocTotxo.vora === "dreta") {
+                    this.posicio.x = xocTotxo.pI.x + this.radi;
+                    this.posicio.y = xocTotxo.pI.y;
+                    this.vx = -this.vx;
+                }
+                
+                totxo.tocat = true; // Marquem el totxo com a destruït
+                xoc = true;
+            }
+        }
+
+        // --- Si no hi ha xoc, continuem el moviment normal ---
+        if (!xoc) {
             this.posicio.x = trajectoria.puntB.x;
             this.posicio.y = trajectoria.puntB.y;
-        }     
+        }
     }
-               
 
-
-    interseccioSegmentRectangle(segment, rectangle){
+    interseccioSegmentRectangle(segment, rectangle) {
        let puntI;
        let distanciaI;
        let puntIMin = null;
@@ -117,10 +152,10 @@ class Bola {
 
        for (let vora of vores) {
            puntI = segment.puntInterseccio(vora.seg);
-           if (puntI){
+           if (puntI) {
                distanciaI = Punt.distanciaDosPunts(segment.puntA, puntI);
 
-               if (distanciaI < distanciaIMin){
+               if (distanciaI < distanciaIMin) {
                    distanciaIMin = distanciaI;
                    puntIMin = puntI;
                    voraI = vora.nom;
@@ -128,14 +163,13 @@ class Bola {
            }
        }
 
-       if(voraI){
-           return {pI: puntIMin, vora: voraI};
+       if (voraI) {
+           return { pI: puntIMin, vora: voraI };
        }
        return null;
     }
 
-    distancia = function(p1,p2){
-        return Math.sqrt((p2.x-p1.x)*(p2.x-p1.x)+(p2.y-p1.y)*(p2.y-p1.y));
+    distancia = function(p1, p2) {
+        return Math.sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
     }
 }
-
