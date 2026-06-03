@@ -3,7 +3,7 @@
 */
 
 let joc;
-let idAnimacio; // Variable per poder aturar el bucle de la pantalla
+let idAnimacio; 
 
 $(document).ready(function() {
 
@@ -16,21 +16,18 @@ $(document).ready(function() {
         if (nom.trim() === "") {
             nom = "Jugador 1"; 
         }
-
-        // Llegim la velocitat triada per l'usuari
         let velocitatEscollida = parseInt($("#velocitat-bola").val()) || 4;
 
         $("#menu-inicial").hide();
         $("#joc").show();
 
-        // Passem la velocitat com a tercer paràmetre al constructor de Joc
         joc = new Joc(myCanvas, ctx, velocitatEscollida);
         joc.inicialitza();
         
         idAnimacio = requestAnimationFrame(animacio);
     });
 
-    // --- ACCIÓ: CLIC AL BOTÓ TORNAR AL MENÚ (GAME OVER) ---
+
     $("#btn-tornar-menu").click(function() {
         $("#game-over").hide();
         $("#menu-inicial").show();

@@ -13,10 +13,9 @@ class Joc {
        
         this.velocitatInicial = velocitatBola;
 
-        // Passem la velocitat triada a la bola
         this.bola = new Bola(new Punt(this.amplada / 2, this.alcada / 2), 7, this.velocitatInicial); 
         
-        // NOU TRUC: La pala tindrà la velocitat de la bola + un extra de 2 píxels perquè no es quedi enrere
+
         let velocitatPala = this.velocitatInicial + 2;
         this.pala = new Pala(new Punt((this.amplada - 100) / 2, this.alcada - 25), 100, 12, velocitatPala); 
         
@@ -94,7 +93,7 @@ class Joc {
             if (this.vides > 0) {
                 this.bola = new Bola(new Punt(this.amplada / 2, this.alcada / 2), 7, this.velocitatInicial);
                 
-                // També restablim la pala amb la seva velocitat proporcional
+                // velocitat proporcional a la pala
                 let velocitatPala = this.velocitatInicial + 2;
                 this.pala = new Pala(new Punt((this.amplada - 100) / 2, this.alcada - 25), 100, 12, velocitatPala);
             } 

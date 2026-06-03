@@ -2,8 +2,6 @@ class Bola {
     constructor(puntPosicio, radi, velocitat = 4) {
         this.radi = radi;
         this.posicio = puntPosicio;
-        
-        // Apliquem la velocitat multiplicant la direcció bàsica de la física
         this.vx = velocitat;
         this.vy = -velocitat;
         this.color = "#fff";
