@@ -22,6 +22,7 @@ class Bola {
 
     update(amplada, alcada, pala, mur) {
         let puntsAconseguits = 0; 
+        let vidaPerduda = false; 
         
         let puntActual = this.posicio;
         let puntSeguent = new Punt(this.posicio.x + this.vx, this.posicio.y + this.vy);
@@ -30,27 +31,30 @@ class Bola {
         let xoc = false;
         
         // --- Xoc amb els laterals del canvas ---
+        // Xoc lateral superior
         if (trajectoria.puntB.y - this.radi < 0) {
             exces = (trajectoria.puntB.y - this.radi) / this.vy;
             this.posicio.x = trajectoria.puntB.x - exces * this.vx;
             this.posicio.y = this.radi;
             xoc = true;
             this.vy = -this.vy;
-        } else if (trajectoria.puntB.y + this.radi > alcada) {
-            exces = (trajectoria.puntB.y + this.radi - alcada) / this.vy;
-            this.posicio.x = trajectoria.puntB.x - exces * this.vx;
-            this.posicio.y = alcada - this.radi;
+        } 
+        // Xoc lateral inferior (CAU AL BUIT)
+        else if (trajectoria.puntB.y + this.radi > alcada) {
+            vidaPerduda = true; // Ja no rebota, perdem la vida!
             xoc = true;
-            this.vy = -this.vy;
         }
         
+        // Xoc lateral esquerra
         if (trajectoria.puntB.x - this.radi < 0) {
             exces = (trajectoria.puntB.x - this.radi) / this.vx;
             this.posicio.x = this.radi;
             this.posicio.y = trajectoria.puntB.y - exces * this.vy; 
             xoc = true;
             this.vx = -this.vx;
-        } else if (trajectoria.puntB.x + this.radi > amplada) {
+        } 
+        // Xoc lateral dret
+        else if (trajectoria.puntB.x + this.radi > amplada) {
             exces = (trajectoria.puntB.x + this.radi - amplada) / this.vx;
             this.posicio.x = amplada - this.radi;
             this.posicio.y = trajectoria.puntB.y - exces * this.vy;
@@ -59,7 +63,7 @@ class Bola {
         }
 
         // --- Xoc amb la pala ---
-        if (this.vy > 0) {
+        if (this.vy > 0 && !vidaPerduda) { // Només comprovem si no ha caigut
             let xocPala = this.interseccioSegmentRectangle(trajectoria, pala);
             
             if (xocPala) {
@@ -97,9 +101,7 @@ class Bola {
                     
                     totxoActual.tocat = true; 
                     xoc = true;
-                    
                     puntsAconseguits = 10; 
-                    
                     break; 
                 }
             }
@@ -110,7 +112,11 @@ class Bola {
             this.posicio.y = trajectoria.puntB.y;
         }
 
-        return puntsAconseguits;
+
+        return {
+            punts: puntsAconseguits,
+            vidaPerduda: vidaPerduda
+        };
     }
 
     interseccioSegmentRectangle(segment, rectangle) {

@@ -16,8 +16,8 @@ class Joc {
         this.mur = new Mur();
         this.mur.generaMur(0, this.totxoamplada, this.totxoalcada, 30, 20); 
 
-        // Iniciem la puntuació a 0
         this.puntuacio = 0;
+        this.vides = 3; // --- NOU: Comencem amb 3 vides ---
 
         this.key = {
             LEFT: {code:37, pressed:false},
@@ -31,20 +31,22 @@ class Joc {
         this.bola.draw(this.ctx);
         this.mur.draw(this.ctx);
 
-        // --- MARCADOR DE PUNTUACIÓ ---
-        this.ctx.save();
+        // --- MARCADOR PUNTUACIÓ I VIDES ---
+        this.ctx.save(); 
         
-
         this.ctx.font = "bold 16px 'Courier New', Courier, monospace"; 
-        this.ctx.fillStyle = "#FFFFFF";
-        this.ctx.textAlign = "right";  
-        
-
+        this.ctx.fillStyle = "#FFFFFF"; 
         this.ctx.shadowColor = "#FF00FF"; 
         this.ctx.shadowBlur = 8;          
         
-
+        // Puntuació a la dreta
+        this.ctx.textAlign = "right";   
         this.ctx.fillText("SCORE: " + this.puntuacio, this.amplada - 15, 25);
+
+        // Vides a l'esquerra
+        this.ctx.textAlign = "left";
+        this.ctx.shadowColor = "#00FFFF"; // Un to cian per les vides
+        this.ctx.fillText("LIVES: " + this.vides, 15, 25);
         
         this.ctx.restore(); 
     }
@@ -68,11 +70,32 @@ class Joc {
     }
 
     update() {
-        // Sumem els punts que retorna el mètode update de la bola
-        let puntsFotograma = this.bola.update(this.amplada, this.alcada, this.pala, this.mur);
+        // Recollim l'objecte amb els resultats de la bola
+        let dadesActualitzacio = this.bola.update(this.amplada, this.alcada, this.pala, this.mur);
         
-        if (puntsFotograma > 0) {
-            this.puntuacio += puntsFotograma;
+        // Sumem els punts
+        if (dadesActualitzacio.punts > 0) {
+            this.puntuacio += dadesActualitzacio.punts;
+        }
+
+        //buit?
+        if (dadesActualitzacio.vidaPerduda) {
+            this.vides--;
+            
+            if (this.vides > 0) {
+                // Ressituem la bola i la pala al centre per seguir jugant
+                this.bola = new Bola(new Punt(this.amplada/2, this.alcada/2), 3);
+                this.pala = new Pala(new Punt((this.amplada-60)/2, this.alcada-15), 60, 4);
+            } else {
+                // GAME OVER
+                alert("GAME OVER! Has aconseguit " + this.puntuacio + " punts.");
+                
+                this.vides = 3;
+                this.puntuacio = 0;
+                this.mur.generaMur(0, this.totxoamplada, this.totxoalcada, 30, 20);
+                this.bola = new Bola(new Punt(this.amplada/2, this.alcada/2), 3);
+                this.pala = new Pala(new Punt((this.amplada-60)/2, this.alcada-15), 60, 4);
+            }
         }
 
         this.pala.update(this.key, this.amplada); 
