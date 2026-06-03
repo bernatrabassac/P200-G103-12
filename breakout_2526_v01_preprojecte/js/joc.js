@@ -11,12 +11,14 @@ class Joc {
         this.totxoamplada = 45; 
         this.totxoalcada = 20; 
        
-        // Guardem la velocitat escollida per fer-la servir en les reaparicions
         this.velocitatInicial = velocitatBola;
 
-        // Passem aquesta velocitat com a tercer paràmetre de la Bola
+        // Passem la velocitat triada a la bola
         this.bola = new Bola(new Punt(this.amplada / 2, this.alcada / 2), 7, this.velocitatInicial); 
-        this.pala = new Pala(new Punt((this.amplada - 100) / 2, this.alcada - 25), 100, 12); 
+        
+        // NOU TRUC: La pala tindrà la velocitat de la bola + un extra de 2 píxels perquè no es quedi enrere
+        let velocitatPala = this.velocitatInicial + 2;
+        this.pala = new Pala(new Punt((this.amplada - 100) / 2, this.alcada - 25), 100, 12, velocitatPala); 
         
         this.mur = new Mur();
         
@@ -90,9 +92,11 @@ class Joc {
             this.vides--;
             
             if (this.vides > 0) {
-                // Al reaparèixer mantenim el radi de 7 i la velocitat seleccionada al menú
                 this.bola = new Bola(new Punt(this.amplada / 2, this.alcada / 2), 7, this.velocitatInicial);
-                this.pala = new Pala(new Punt((this.amplada - 100) / 2, this.alcada - 25), 100, 12);
+                
+                // També restablim la pala amb la seva velocitat proporcional
+                let velocitatPala = this.velocitatInicial + 2;
+                this.pala = new Pala(new Punt((this.amplada - 100) / 2, this.alcada - 25), 100, 12, velocitatPala);
             } 
         }
 
