@@ -2,7 +2,7 @@
 * CLASSE JOC
 */
 class Joc {
-    constructor(canvas, ctx, velocitatBola = 4) {
+    constructor(canvas, ctx, velocitatBola = 4, numNivell = 0) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.amplada = canvas.width;
@@ -12,10 +12,10 @@ class Joc {
         this.totxoalcada = 20; 
        
         this.velocitatInicial = velocitatBola;
+        this.numNivell = numNivell;
 
         this.bola = new Bola(new Punt(this.amplada / 2, this.alcada / 2), 7, this.velocitatInicial); 
         
-
         let velocitatPala = this.velocitatInicial + 2;
         this.pala = new Pala(new Punt((this.amplada - 100) / 2, this.alcada - 25), 100, 12, velocitatPala); 
         
@@ -25,7 +25,7 @@ class Joc {
         let ampladaTotalMur = this.totxoamplada * columnesTotals;
         let margeEsquerraCentrat = (this.amplada - ampladaTotalMur) / 2;
 
-        this.mur.generaMur(0, this.totxoamplada, this.totxoalcada, 55, margeEsquerraCentrat); 
+        this.mur.generaMur(this.numNivell, this.totxoamplada, this.totxoalcada, 55, margeEsquerraCentrat); 
 
         this.puntuacio = 0;
         this.vides = 3; 
