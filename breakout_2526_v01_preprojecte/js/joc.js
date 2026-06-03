@@ -29,8 +29,6 @@ class Joc {
 
         this.puntuacio = 0;
         this.vides = 3; 
-        
-        // --- NOU: Variable per indicar a l'App que hem guanyat ---
         this.nivellSuperat = false;
 
         this.key = {
@@ -80,8 +78,22 @@ class Joc {
     }
 
     update() {
+        this.pala.update(this.key, this.amplada); 
+
+        if (!this.bola.enMoviment) {
+            if (this.key.LEFT.pressed) {
+                this.bola.vx = -Math.abs(this.bola.vx); // bola surt cap a esq
+                this.bola.enMoviment = true;
+            } else if (this.key.RIGHT.pressed) {
+                this.bola.vx = Math.abs(this.bola.vx); // bola surt cap a la dreta
+                this.bola.enMoviment = true;
+            }
+        }
+
+
         let dadesActualitzacio = this.bola.update(this.amplada, this.alcada, this.pala, this.mur);
         
+
         if (dadesActualitzacio.punts > 0) {
             this.puntuacio += dadesActualitzacio.punts;
         }
@@ -90,6 +102,7 @@ class Joc {
             this.vides--;
             
             if (this.vides > 0) {
+                // Al recrear la bola, aquesta tornarà a tenir enMoviment = false automàticament
                 this.bola = new Bola(new Punt(this.amplada / 2, this.alcada / 2), 7, this.velocitatInicial);
                 
                 let velocitatPala = this.velocitatInicial + 2;
@@ -97,10 +110,6 @@ class Joc {
             } 
         }
 
-        this.pala.update(this.key, this.amplada); 
-        this.draw();       
-        
-        // --- NOU: Comprovem si tots els totxos estan destruïts ---
         let totxosDestruits = 0;
         for (let i = 0; i < this.mur.llistaTotxos.length; i++) {
             if (this.mur.llistaTotxos[i].tocat) {
@@ -108,9 +117,11 @@ class Joc {
             }
         }
         
-        // Si hem trencat tots els totxos (i n'hi havia algun), has guanyat!
         if (totxosDestruits === this.mur.llistaTotxos.length && this.mur.llistaTotxos.length > 0) {
             this.nivellSuperat = true;
         }
+
+        // 7. Dibuixem
+        this.draw();       
     }
 }

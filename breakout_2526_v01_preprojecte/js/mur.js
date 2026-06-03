@@ -52,15 +52,6 @@ class Mur {
             {
                 color: "#4CF", // blue cel
                 totxos:[
-                    "            ",
-                    "            ",
-                    "          a ",
-                    "            ",
-                ]
-            },
-            {
-                color: "#4CF", // blue cel
-                totxos:[
                     "aaaaaaaaaaaa",
                     "aaaaaaaaaaaa",
                     "aaaaaaaaaaaa",

@@ -2,9 +2,12 @@ class Bola {
     constructor(puntPosicio, radi, velocitat = 4) {
         this.radi = radi;
         this.posicio = puntPosicio;
+        
         this.vx = velocitat;
         this.vy = -velocitat;
         this.color = "#fff";
+        
+        this.enMoviment = false; 
     }
 
     draw(ctx) {
@@ -21,6 +24,12 @@ class Bola {
     }
 
     update(amplada, alcada, pala, mur) {
+        if (!this.enMoviment) {
+            this.posicio.x = pala.posicio.x + (pala.amplada / 2);
+            this.posicio.y = pala.posicio.y - this.radi;
+            return { punts: 0, vidaPerduda: false }; // No fa res més
+        }
+
         let puntsAconseguits = 0; 
         let vidaPerduda = false; 
         
@@ -31,7 +40,6 @@ class Bola {
         let xoc = false;
         
         // --- Xoc amb els laterals del canvas ---
-        // Xoc lateral superior
         if (trajectoria.puntB.y - this.radi < 0) {
             exces = (trajectoria.puntB.y - this.radi) / this.vy;
             this.posicio.x = trajectoria.puntB.x - exces * this.vx;
@@ -39,13 +47,11 @@ class Bola {
             xoc = true;
             this.vy = -this.vy;
         } 
-        // Xoc lateral inferior (CAU AL BUIT)
         else if (trajectoria.puntB.y + this.radi > alcada) {
             vidaPerduda = true; 
             xoc = true;
         }
         
-        // Xoc lateral esquerra
         if (trajectoria.puntB.x - this.radi < 0) {
             exces = (trajectoria.puntB.x - this.radi) / this.vx;
             this.posicio.x = this.radi;
@@ -53,7 +59,6 @@ class Bola {
             xoc = true;
             this.vx = -this.vx;
         } 
-        // Xoc lateral dret
         else if (trajectoria.puntB.x + this.radi > amplada) {
             exces = (trajectoria.puntB.x + this.radi - amplada) / this.vx;
             this.posicio.x = amplada - this.radi;
