@@ -10,25 +10,28 @@ class Mur {
     generaMur(numNivell, ampladaTotxo, alcadaTotxo, margeSuperior = 40, margeEsquerra = 15) {
         this.llistaTotxos = []; 
         
-        let dadesNivell = this.nivells[numNivell]; 
+        let dadesNivell = this.nivells[numNivell]; // Agafem el nivell triat (0, 1 o 2)
         let color = dadesNivell.color;
         let files = dadesNivell.totxos;
 
-        // Recorrem les files (Y)
+        let separacio = 3; 
+
         for (let i = 0; i < files.length; i++) {
             let filaStr = files[i];
             
-
             for (let j = 0; j < filaStr.length; j++) {
                 
-
                 if (filaStr[j] === 'a') {
-
                     let posX = margeEsquerra + (j * ampladaTotxo);
                     let posY = margeSuperior + (i * alcadaTotxo);
                     
-
-                    let nouTotxo = new Totxo(new Punt(posX, posY), ampladaTotxo, alcadaTotxo, color);
+                    let nouTotxo = new Totxo(
+                        new Punt(posX, posY), 
+                        ampladaTotxo - separacio, 
+                        alcadaTotxo - separacio, 
+                        color
+                    );
+                    
                     this.llistaTotxos.push(nouTotxo);
                 }
             }
@@ -46,6 +49,15 @@ class Mur {
      
     defineixNivells() {
         this.nivells=[
+            {
+                color: "#4CF", // blue cel
+                totxos:[
+                    "            ",
+                    "            ",
+                    "          a ",
+                    "            ",
+                ]
+            },
             {
                 color: "#4CF", // blue cel
                 totxos:[
@@ -75,6 +87,7 @@ class Mur {
                     "  aaaaaaaa  ",
                 ]
             }
+
         ];
     }
 }

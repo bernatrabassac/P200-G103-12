@@ -12,7 +12,7 @@ class Joc {
         this.totxoalcada = 20; 
        
         this.velocitatInicial = velocitatBola;
-        this.numNivell = numNivell;
+        this.numNivell = numNivell; 
 
         this.bola = new Bola(new Punt(this.amplada / 2, this.alcada / 2), 7, this.velocitatInicial); 
         
@@ -29,6 +29,9 @@ class Joc {
 
         this.puntuacio = 0;
         this.vides = 3; 
+        
+        // --- NOU: Variable per indicar a l'App que hem guanyat ---
+        this.nivellSuperat = false;
 
         this.key = {
             LEFT: {code:37, pressed:false},
@@ -42,19 +45,15 @@ class Joc {
         this.bola.draw(this.ctx);
         this.mur.draw(this.ctx);
 
-        // --- MARCADOR PUNTUACIÓ I VIDES ---
         this.ctx.save(); 
-        
         this.ctx.font = "bold 16px 'Courier New', Courier, monospace"; 
         this.ctx.fillStyle = "#FFFFFF"; 
         this.ctx.shadowColor = "#FF00FF"; 
         this.ctx.shadowBlur = 8;          
         
-        // Puntuació a la dreta
         this.ctx.textAlign = "right";   
         this.ctx.fillText("SCORE: " + this.puntuacio, this.amplada - 15, 25);
 
-        // Vides a l'esquerra
         this.ctx.textAlign = "left";
         this.ctx.shadowColor = "#00FFFF"; 
         this.ctx.fillText("LIVES: " + this.vides, 15, 25);
@@ -93,7 +92,6 @@ class Joc {
             if (this.vides > 0) {
                 this.bola = new Bola(new Punt(this.amplada / 2, this.alcada / 2), 7, this.velocitatInicial);
                 
-                // velocitat proporcional a la pala
                 let velocitatPala = this.velocitatInicial + 2;
                 this.pala = new Pala(new Punt((this.amplada - 100) / 2, this.alcada - 25), 100, 12, velocitatPala);
             } 
@@ -101,5 +99,18 @@ class Joc {
 
         this.pala.update(this.key, this.amplada); 
         this.draw();       
+        
+        // --- NOU: Comprovem si tots els totxos estan destruïts ---
+        let totxosDestruits = 0;
+        for (let i = 0; i < this.mur.llistaTotxos.length; i++) {
+            if (this.mur.llistaTotxos[i].tocat) {
+                totxosDestruits++;
+            }
+        }
+        
+        // Si hem trencat tots els totxos (i n'hi havia algun), has guanyat!
+        if (totxosDestruits === this.mur.llistaTotxos.length && this.mur.llistaTotxos.length > 0) {
+            this.nivellSuperat = true;
+        }
     }
 }
