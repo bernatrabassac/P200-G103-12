@@ -1,9 +1,11 @@
 class Bola {
-    constructor(puntPosicio, radi) {
+    constructor(puntPosicio, radi, velocitat = 4) {
         this.radi = radi;
         this.posicio = puntPosicio;
-        this.vx = 1;
-        this.vy = -1;
+        
+        // Apliquem la velocitat multiplicant la direcció bàsica de la física
+        this.vx = velocitat;
+        this.vy = -velocitat;
         this.color = "#fff";
     }
 
@@ -41,7 +43,7 @@ class Bola {
         } 
         // Xoc lateral inferior (CAU AL BUIT)
         else if (trajectoria.puntB.y + this.radi > alcada) {
-            vidaPerduda = true; // Ja no rebota, perdem la vida!
+            vidaPerduda = true; 
             xoc = true;
         }
         
@@ -63,7 +65,7 @@ class Bola {
         }
 
         // --- Xoc amb la pala ---
-        if (this.vy > 0 && !vidaPerduda) { // Només comprovem si no ha caigut
+        if (this.vy > 0 && !vidaPerduda) { 
             let xocPala = this.interseccioSegmentRectangle(trajectoria, pala);
             
             if (xocPala) {
@@ -111,7 +113,6 @@ class Bola {
             this.posicio.x = trajectoria.puntB.x;
             this.posicio.y = trajectoria.puntB.y;
         }
-
 
         return {
             punts: puntsAconseguits,

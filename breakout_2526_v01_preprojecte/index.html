@@ -1,34 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>BreackOut 23-24
-        </title>
-        <link rel="stylesheet" href="css\estils.css">
-     
-    </head>
-<html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <title>BreakOut 23-24</title>
+    <link rel="stylesheet" href="css/estils.css">
+</head>
 <body>
     <div id="principal">
       
-            <canvas id="joc"></canvas>
+        <div id="menu-inicial" class="pantalla-html">
+            <h1>BreakOut DEMO</h1>
+            
+            <div class="caixa-opcions">
+                <label>Introdueix el teu nom:</label><br>
+                <input type="text" id="nom-usuari" placeholder="Nom d'usuari"><br><br>
+                
+                <label>Selecciona la velocitat de la bola:</label><br>
+                <select id="velocitat-bola">
+                    <option value="2">Molt Lenta (Vel. 2)</option>
+                    <option value="4" selected>Normal (Vel. 4)</option>
+                    <option value="6">Ràpida (Vel. 6)</option>
+                    <option value="8">Súper Ràpida (Vel. 8)</option>
+                </select><br><br>
 
-    
-    
+                <label>Selecciona el nivell:</label><br>
+                <button class="btn-nivell" data-nivell="0">NIVELL 1</button>
+                <button class="btn-nivell" data-nivell="1">NIVELL 2</button>
+                <button class="btn-nivell" data-nivell="2">NIVELL 3</button><br><br>
+                
+                <button id="btn-jugar">JUGAR</button>
+            </div>
+        </div>
+
+        <canvas id="joc" width="800" height="600" style="display: none;"></canvas>
+
+        <div id="game-over" class="pantalla-html" style="display: none;">
+            <h1>GAME OVER</h1>
+            <h2>Has perdut totes les vides...</h2>
+            <p>Puntuació final: <span id="puntuacio-final">0</span></p>
+            <button id="btn-tornar-menu">Tornar al Menú</button>
+        </div>
     
     </div>
+
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    
+    <script src="js/punt.js"></script>
+    <script src="js/segment.js"></script>
+    <script src="js/bola.js"></script>
+    <script src="js/pala.js"></script>
+    <script src="js/totxo.js"></script>
+    <script src="js/mur.js"></script>
+    <script src="js/joc.js"></script>
+    
+    <script src="js/app.js"></script>
+
 </body>
-
-
-<script src="js/jquery-3.6.0.min.js"></script>
-<script src="js/jquery-ui.min.js"></script>
-<script src="js/joc.js"></script>
-<script src="js/bola.js"></script>
-<script src="js/punt.js"></script>
-<script src="js/pala.js"></script>
-<script src="js/totxo.js"></script>
-<script src="js/mur.js"></script>
-<script src="js/segment.js"></script>
-<script src="js/app.js"></script>
-
 </html>

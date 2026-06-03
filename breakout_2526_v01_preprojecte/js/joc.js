@@ -2,22 +2,32 @@
 * CLASSE JOC
 */
 class Joc {
-    constructor(canvas, ctx) {
+    constructor(canvas, ctx, velocitatBola = 4) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.amplada = canvas.width;
         this.alcada = canvas.height;
-        this.totxoamplada = 22; 
-        this.totxoalcada = 10; 
+        
+        this.totxoamplada = 45; 
+        this.totxoalcada = 20; 
        
-        this.bola = new Bola(new Punt(this.canvas.width/2, this.canvas.height/2), 3);
-        this.pala = new Pala(new Punt((this.canvas.width-60)/2, this.canvas.height-15), 60, 4);
+        // Guardem la velocitat escollida per fer-la servir en les reaparicions
+        this.velocitatInicial = velocitatBola;
+
+        // Passem aquesta velocitat com a tercer paràmetre de la Bola
+        this.bola = new Bola(new Punt(this.amplada / 2, this.alcada / 2), 7, this.velocitatInicial); 
+        this.pala = new Pala(new Punt((this.amplada - 100) / 2, this.alcada - 25), 100, 12); 
         
         this.mur = new Mur();
-        this.mur.generaMur(0, this.totxoamplada, this.totxoalcada, 30, 20); 
+        
+        let columnesTotals = 12; 
+        let ampladaTotalMur = this.totxoamplada * columnesTotals;
+        let margeEsquerraCentrat = (this.amplada - ampladaTotalMur) / 2;
+
+        this.mur.generaMur(0, this.totxoamplada, this.totxoalcada, 55, margeEsquerraCentrat); 
 
         this.puntuacio = 0;
-        this.vides = 3; // --- NOU: Comencem amb 3 vides ---
+        this.vides = 3; 
 
         this.key = {
             LEFT: {code:37, pressed:false},
@@ -45,14 +55,14 @@ class Joc {
 
         // Vides a l'esquerra
         this.ctx.textAlign = "left";
-        this.ctx.shadowColor = "#00FFFF"; // Un to cian per les vides
+        this.ctx.shadowColor = "#00FFFF"; 
         this.ctx.fillText("LIVES: " + this.vides, 15, 25);
         
         this.ctx.restore(); 
     }
 
     clearCanvas() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        this.ctx.clearRect(0, 0, this.amplada, this.alcada);
     }
 
     inicialitza() {
@@ -70,32 +80,20 @@ class Joc {
     }
 
     update() {
-        // Recollim l'objecte amb els resultats de la bola
         let dadesActualitzacio = this.bola.update(this.amplada, this.alcada, this.pala, this.mur);
         
-        // Sumem els punts
         if (dadesActualitzacio.punts > 0) {
             this.puntuacio += dadesActualitzacio.punts;
         }
 
-        //buit?
         if (dadesActualitzacio.vidaPerduda) {
             this.vides--;
             
             if (this.vides > 0) {
-                // Ressituem la bola i la pala al centre per seguir jugant
-                this.bola = new Bola(new Punt(this.amplada/2, this.alcada/2), 3);
-                this.pala = new Pala(new Punt((this.amplada-60)/2, this.alcada-15), 60, 4);
-            } else {
-                // GAME OVER
-                alert("GAME OVER! Has aconseguit " + this.puntuacio + " punts.");
-                
-                this.vides = 3;
-                this.puntuacio = 0;
-                this.mur.generaMur(0, this.totxoamplada, this.totxoalcada, 30, 20);
-                this.bola = new Bola(new Punt(this.amplada/2, this.alcada/2), 3);
-                this.pala = new Pala(new Punt((this.amplada-60)/2, this.alcada-15), 60, 4);
-            }
+                // Al reaparèixer mantenim el radi de 7 i la velocitat seleccionada al menú
+                this.bola = new Bola(new Punt(this.amplada / 2, this.alcada / 2), 7, this.velocitatInicial);
+                this.pala = new Pala(new Punt((this.amplada - 100) / 2, this.alcada - 25), 100, 12);
+            } 
         }
 
         this.pala.update(this.key, this.amplada); 
