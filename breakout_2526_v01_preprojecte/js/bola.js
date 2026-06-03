@@ -21,6 +21,8 @@ class Bola {
     }
 
     update(amplada, alcada, pala, mur) {
+        let puntsAconseguits = 0; 
+        
         let puntActual = this.posicio;
         let puntSeguent = new Punt(this.posicio.x + this.vx, this.posicio.y + this.vy);
         let trajectoria = new Segment(puntActual, puntSeguent);
@@ -28,17 +30,13 @@ class Bola {
         let xoc = false;
         
         // --- Xoc amb els laterals del canvas ---
-        
-        // Xoc lateral superior
         if (trajectoria.puntB.y - this.radi < 0) {
             exces = (trajectoria.puntB.y - this.radi) / this.vy;
             this.posicio.x = trajectoria.puntB.x - exces * this.vx;
             this.posicio.y = this.radi;
             xoc = true;
             this.vy = -this.vy;
-        }
-        // Xoc lateral inferior
-        else if (trajectoria.puntB.y + this.radi > alcada) {
+        } else if (trajectoria.puntB.y + this.radi > alcada) {
             exces = (trajectoria.puntB.y + this.radi - alcada) / this.vy;
             this.posicio.x = trajectoria.puntB.x - exces * this.vx;
             this.posicio.y = alcada - this.radi;
@@ -46,16 +44,13 @@ class Bola {
             this.vy = -this.vy;
         }
         
-        // Xoc lateral esquerra
         if (trajectoria.puntB.x - this.radi < 0) {
             exces = (trajectoria.puntB.x - this.radi) / this.vx;
             this.posicio.x = this.radi;
             this.posicio.y = trajectoria.puntB.y - exces * this.vy; 
             xoc = true;
             this.vx = -this.vx;
-        }
-        // Xoc lateral dret
-        else if (trajectoria.puntB.x + this.radi > amplada) {
+        } else if (trajectoria.puntB.x + this.radi > amplada) {
             exces = (trajectoria.puntB.x + this.radi - amplada) / this.vx;
             this.posicio.x = amplada - this.radi;
             this.posicio.y = trajectoria.puntB.y - exces * this.vy;
@@ -68,8 +63,6 @@ class Bola {
             let xocPala = this.interseccioSegmentRectangle(trajectoria, pala);
             
             if (xocPala) {
-                // SOLUCIÓ: Clavem la bola exactament a la part superior de la pala.
-                // Eliminem l'excés matemàtic que empentava la bola cap a dins per error.
                 this.posicio.x = xocPala.pI.x;
                 this.posicio.y = pala.posicio.y - this.radi; 
                 this.vy = -this.vy; 
@@ -104,16 +97,20 @@ class Bola {
                     
                     totxoActual.tocat = true; 
                     xoc = true;
+                    
+                    puntsAconseguits = 10; 
+                    
                     break; 
                 }
             }
         }
 
-        // --- Si no hi ha xoc, continuem el moviment normal ---
         if (!xoc) {
             this.posicio.x = trajectoria.puntB.x;
             this.posicio.y = trajectoria.puntB.y;
         }
+
+        return puntsAconseguits;
     }
 
     interseccioSegmentRectangle(segment, rectangle) {
