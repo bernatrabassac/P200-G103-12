@@ -32,7 +32,13 @@
             </div>
         </div>
 
-        <canvas id="joc" width="800" height="600" style="display: none;"></canvas>
+        <div id="pantalla-joc" style="display: none; text-align: center;">
+            <div style="margin-bottom: 10px; padding-top: 10px;">
+                <button id="btn-tornar-mig-joc">Tornar al Menú</button>
+                <button id="btn-toggle-so">🔊 So: ON</button>
+            </div>
+            <canvas id="joc" width="800" height="600"></canvas>
+        </div>
 
         <div id="game-over" class="pantalla-html" style="display: none;">
             <h1>GAME OVER</h1>
@@ -45,9 +51,7 @@
             <h1>VICTÒRIA!</h1>
             <h2 id="text-victoria">Has netejat el nivell!</h2>
             <p>Puntuació: <span id="puntuacio-victoria">0</span></p>
-            
             <button id="btn-seguent-nivell">Següent Nivell</button>
-            
             <button id="btn-tornar-menu-victoria">Tornar al Menú</button>
         </div>
     

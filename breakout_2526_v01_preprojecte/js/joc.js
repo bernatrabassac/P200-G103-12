@@ -82,29 +82,26 @@ class Joc {
 
         if (!this.bola.enMoviment) {
             if (this.key.LEFT.pressed) {
-                this.bola.vx = -Math.abs(this.bola.vx); // bola surt cap a esq
+                this.bola.vx = -Math.abs(this.bola.vx); 
                 this.bola.enMoviment = true;
             } else if (this.key.RIGHT.pressed) {
-                this.bola.vx = Math.abs(this.bola.vx); // bola surt cap a la dreta
+                this.bola.vx = Math.abs(this.bola.vx); 
                 this.bola.enMoviment = true;
             }
         }
 
-
         let dadesActualitzacio = this.bola.update(this.amplada, this.alcada, this.pala, this.mur);
         
-
         if (dadesActualitzacio.punts > 0) {
             this.puntuacio += dadesActualitzacio.punts;
         }
 
         if (dadesActualitzacio.vidaPerduda) {
             this.vides--;
+            this.emetSoTrist(); 
             
             if (this.vides > 0) {
-                // Al recrear la bola, aquesta tornarà a tenir enMoviment = false automàticament
                 this.bola = new Bola(new Punt(this.amplada / 2, this.alcada / 2), 7, this.velocitatInicial);
-                
                 let velocitatPala = this.velocitatInicial + 2;
                 this.pala = new Pala(new Punt((this.amplada - 100) / 2, this.alcada - 25), 100, 12, velocitatPala);
             } 
@@ -121,7 +118,27 @@ class Joc {
             this.nivellSuperat = true;
         }
 
-        // 7. Dibuixem
         this.draw();       
+    }
+
+    emetSoTrist() {
+        if (!window.soActivat || !window.audioCtx) return;
+        try {
+            let oscil·lador = window.audioCtx.createOscillator();
+            let nodeGuany = window.audioCtx.createGain();
+
+            oscil·lador.type = "sawtooth";
+            oscil·lador.frequency.setValueAtTime(250, window.audioCtx.currentTime);
+            oscil·lador.frequency.linearRampToValueAtTime(80, window.audioCtx.currentTime + 0.4);
+
+            nodeGuany.gain.setValueAtTime(0.15, window.audioCtx.currentTime);
+            nodeGuany.gain.linearRampToValueAtTime(0.0001, window.audioCtx.currentTime + 0.4);
+
+            oscil·lador.connect(nodeGuany);
+            nodeGuany.connect(window.audioCtx.destination);
+
+            oscil·lador.start();
+            oscil·lador.stop(window.audioCtx.currentTime + 0.4);
+        } catch(e) {}
     }
 }

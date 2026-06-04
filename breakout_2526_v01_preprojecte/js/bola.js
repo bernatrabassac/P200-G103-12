@@ -27,7 +27,7 @@ class Bola {
         if (!this.enMoviment) {
             this.posicio.x = pala.posicio.x + (pala.amplada / 2);
             this.posicio.y = pala.posicio.y - this.radi;
-            return { punts: 0, vidaPerduda: false }; // No fa res més
+            return { punts: 0, vidaPerduda: false }; 
         }
 
         let puntsAconseguits = 0; 
@@ -39,13 +39,13 @@ class Bola {
         let exces;
         let xoc = false;
         
-        // --- Xoc amb els laterals del canvas ---
         if (trajectoria.puntB.y - this.radi < 0) {
             exces = (trajectoria.puntB.y - this.radi) / this.vy;
             this.posicio.x = trajectoria.puntB.x - exces * this.vx;
             this.posicio.y = this.radi;
             xoc = true;
             this.vy = -this.vy;
+            this.emetSo(150, 0.05, "square"); 
         } 
         else if (trajectoria.puntB.y + this.radi > alcada) {
             vidaPerduda = true; 
@@ -58,6 +58,7 @@ class Bola {
             this.posicio.y = trajectoria.puntB.y - exces * this.vy; 
             xoc = true;
             this.vx = -this.vx;
+            this.emetSo(150, 0.05, "square");
         } 
         else if (trajectoria.puntB.x + this.radi > amplada) {
             exces = (trajectoria.puntB.x + this.radi - amplada) / this.vx;
@@ -65,9 +66,9 @@ class Bola {
             this.posicio.y = trajectoria.puntB.y - exces * this.vy;
             xoc = true;
             this.vx = -this.vx;
+            this.emetSo(150, 0.05, "square");
         }
 
-        // --- Xoc amb la pala ---
         if (this.vy > 0 && !vidaPerduda) { 
             let xocPala = this.interseccioSegmentRectangle(trajectoria, pala);
             
@@ -76,10 +77,10 @@ class Bola {
                 this.posicio.y = pala.posicio.y - this.radi; 
                 this.vy = -this.vy; 
                 xoc = true;
+                this.emetSo(300, 0.1, "triangle"); 
             }
         }
 
-        // --- Xoc amb el mur de totxos ---
         for (let i = 0; i < mur.llistaTotxos.length; i++) {
             let totxoActual = mur.llistaTotxos[i];
             
@@ -107,6 +108,7 @@ class Bola {
                     totxoActual.tocat = true; 
                     xoc = true;
                     puntsAconseguits = 10; 
+                    this.emetSo(600, 0.08, "sine"); 
                     break; 
                 }
             }
@@ -163,5 +165,25 @@ class Bola {
 
     distancia = function(p1, p2) {
         return Math.sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
+    }
+
+    emetSo(frequencia, durada, tipusOnda = "sine") {
+        if (!window.soActivat || !window.audioCtx) return;
+        try {
+            let oscil·lador = window.audioCtx.createOscillator();
+            let nodeGuany = window.audioCtx.createGain();
+
+            oscil·lador.type = tipusOnda;
+            oscil·lador.frequency.setValueAtTime(frequencia, window.audioCtx.currentTime);
+            
+            nodeGuany.gain.setValueAtTime(0.1, window.audioCtx.currentTime);
+            nodeGuany.gain.exponentialRampToValueAtTime(0.0001, window.audioCtx.currentTime + durada);
+
+            oscil·lador.connect(nodeGuany);
+            nodeGuany.connect(window.audioCtx.destination);
+
+            oscil·lador.start();
+            oscil·lador.stop(window.audioCtx.currentTime + durada);
+        } catch (e) {}
     }
 }
